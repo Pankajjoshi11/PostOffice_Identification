@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true }, // Storing plain text for now, but should be hashed in production
 });
 
+
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

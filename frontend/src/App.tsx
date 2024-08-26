@@ -13,8 +13,10 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUpMain />} />
+          <Route path="/" exact component={AddressForm} />
+          <Route path="/address/:id" component={AddressDetails} />
          
-          {/* Add more routes here as needed */}
+          
         </Routes>
       </Router>
     </>

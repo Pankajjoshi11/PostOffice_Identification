@@ -2,6 +2,7 @@ import PostApi from "../components/PostApi";
 // initialising dev branch
 import React, { useState } from "react";
 import SendSMSComponent from "./SendSMSComponent";
+import EditAddress from "./editAdress";
 
 const Main: React.FC = () => {
   const [sendSms, setSendSms] = useState(false);
@@ -19,6 +20,7 @@ const Main: React.FC = () => {
           message="This is message from react app!"
         />
       </div>
+     
     
     </div>
   );

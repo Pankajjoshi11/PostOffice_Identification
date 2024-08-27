@@ -15,8 +15,8 @@ const Main: React.FC = () => {
         <button onClick={() => setSendSms(true)}>Send SMS</button>
         <SendSMSComponent
           sendSms={sendSms}
-          phoneNumber="+917045191561"
-          message="This is a test message from your React app!"
+          phoneNumber="+919653268068"
+          message="This is message from react app!"
         />
       </div>
     

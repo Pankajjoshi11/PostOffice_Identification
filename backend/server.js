@@ -11,8 +11,8 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors()); // Ensure this is placed before your routes
-app.use(express.json());
+app.use(cors());
+app.use(express.json()); // Middleware to parse JSON
 
 // API Routes
 app.use('/api/users', userRoutes);
@@ -28,6 +28,16 @@ const twilioClient = twilio(accountSid, authToken);
 app.post('/api/send-sms', (req, res) => {
   const { phoneNumber, message } = req.body;
 
+  // Logging received data
+  console.log('Received phoneNumber:', phoneNumber);
+  console.log('Received message:', message);
+
+  // Validate input
+  if (!phoneNumber || !message) {
+    return res.status(400).json({ error: 'Phone number and message are required.' });
+  }
+
+  // Sending SMS via Twilio
   twilioClient.messages
     .create({s
       body: message,
@@ -35,7 +45,10 @@ app.post('/api/send-sms', (req, res) => {
       to: phoneNumber,
     })
     .then((message) => res.json({ sid: message.sid }))
-    .catch((error) => res.status(500).json({ error: error.message }));
+    .catch((error) => {
+      console.error('Twilio Error:', error);
+      res.status(500).json({ error: error.message });
+    });
 });
 
 // Start the server

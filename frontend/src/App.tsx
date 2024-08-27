@@ -3,6 +3,7 @@ import './App.css'
 import Login from './pages/Login'
 import SignUpMain from './pages/SignUpMain'
 import Main from './pages/Main'
+// import AddressForm from './pages/EditAdressForm'
 
 function App() {
 
@@ -13,8 +14,7 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUpMain />} />
-          <Route path="/" exact component={AddressForm} />
-          <Route path="/address/:id" component={AddressDetails} />
+          {/* <Route path="/editaddress" element={<AddressForm />} /> */}
          
           
         </Routes>

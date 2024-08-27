@@ -1,7 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 
-const AddressForm = () => {
-  const [formData, setFormData] = useState({
+// Define a type for the form data state
+interface FormData {
+  addressLine1: string;
+  addressLine2: string;
+  addressLine3: string;
+  state: string;
+  district: string;
+  pincode: string;
+}
+
+const AddressForm: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
     addressLine1: "",
     addressLine2: "",
     addressLine3: "",
@@ -10,14 +20,15 @@ const AddressForm = () => {
     pincode: "",
   });
 
-  const handleChange = (e) => {
+  // Define types for event handlers
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {

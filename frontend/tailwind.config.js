@@ -11,12 +11,22 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: '2rem', // Default padding
+        sm: '1rem',    // Small screens
+        md: '2rem',    // Medium screens
+        lg: '3rem',    // Large screens
+        xl: '4rem',    // Extra large screens
+        '2xl': '5rem', // Extra extra large screens
+      },
       screens: {
-        "2xl": "1400px",
+        "2xl": "1400px", // Maximum width for 2xl screens
       },
     },
     extend: {
+      minHeight: {
+        'screen': '100vh', // Full viewport height
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

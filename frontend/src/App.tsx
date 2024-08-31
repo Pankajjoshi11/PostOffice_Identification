@@ -3,6 +3,7 @@ import './App.css'
 import Login from './pages/Login'
 import SignUpMain from './pages/SignUpMain'
 import Main from './pages/Main'
+import Dashboard from './components/Dashboard'
 // import AddressForm from './pages/EditAdressForm'
 
 

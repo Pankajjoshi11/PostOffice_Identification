@@ -1,14 +1,15 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
 // Register a new user
 const registerUser = async (req, res) => {
-  const { name, number, state, city, pincode, area, street, email, password } = req.body;
+  const { name, pincode, deliveryStatus, district, state, password } = req.body;
 
   console.log('Received registration request:', req.body); // Debugging line
 
   try {
     // Check if the user already exists
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: req.body.email });
 
     console.log('User exists:', userExists); // Debugging line
 
@@ -16,17 +17,17 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create a new user with plain password (for debugging only)
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
     const user = await User.create({
       name,
-      number,
-      state,
-      city,
       pincode,
-      area,
-      street,
-      email,
-      password, // Save the plain password
+      deliveryStatus,
+      district,
+      state,
+      password: hashedPassword, // Save the hashed password
     });
 
     console.log('New user created:', user); // Debugging line
@@ -57,8 +58,10 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Compare the provided password with the stored password in the database
-    if (user.password !== password) {
+    // Compare the provided password with the hashed password in the database
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 

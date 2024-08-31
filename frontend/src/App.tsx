@@ -9,25 +9,15 @@ import Dashboard from './components/Dashboard'
 
 
 function App() {
-
   return (
-    <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Main />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUpMain />} />
-
-          {/* <Route path="/editaddress" element={<AddressForm />} /> */}
-    
-         
-          
-        </Routes>
-      </Router>
-
-      
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUpMain />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

@@ -2,7 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoute');
-const postRoutes = require('./routes/postRoute');
+const postRoutes = require('./routes/postRoutes');
+const Post = require('./models/Post'); // Import Post model
+const jwt = require('jsonwebtoken'); // Import JWT for token handling
 require('dotenv').config();
 
 // Connect to the database
@@ -49,6 +51,56 @@ app.post('/api/send-sms', (req, res) => {
       console.error('Twilio Error:', error);
       res.status(500).json({ error: error.message });
     });
+});
+
+// Route to validate unique URL and get post data
+app.get('/api/validate-link/:uniqueId', async (req, res) => {
+  const { uniqueId } = req.params;
+
+  try {
+    const post = await Post.findOne({ 'uniqueId': uniqueId });
+
+    if (post) {
+      // Check if the link has expired
+      const currentTime = new Date().getTime();
+      if (currentTime > post.expiryTime) {
+        return res.status(400).json({ valid: false });
+      }
+
+      res.json({ valid: true, post });
+    } else {
+      res.status(400).json({ valid: false });
+    }
+  } catch (error) {
+    console.error('Error validating link:', error);
+    res.status(500).json({ error: 'An error occurred while validating the link.' });
+  }
+});
+
+// Route to update address
+app.post('/api/update-address', async (req, res) => {
+  const { consignmentNo, address } = req.body;
+
+  if (!consignmentNo || !address) {
+    return res.status(400).json({ error: 'Consignment number and address are required.' });
+  }
+
+  try {
+    const updatedPost = await Post.findOneAndUpdate(
+      { consignmentNo },
+      { $set: address },
+      { new: true } // Return the updated document
+    );
+
+    if (updatedPost) {
+      res.json({ message: 'Address updated successfully', post: updatedPost });
+    } else {
+      res.status(404).json({ error: 'Post not found.' });
+    }
+  } catch (error) {
+    console.error('Error updating address:', error);
+    res.status(500).json({ error: 'An error occurred while updating the address.' });
+  }
 });
 
 // Start the server

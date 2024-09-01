@@ -12,7 +12,9 @@ const postSchema = new mongoose.Schema({
   area: { type: String, required: true },
   addressLine1: { type: String, required: true },
   addressLine2: { type: String, required: false },
+  deliveryStatus: { type: String, default: '' }, // Ensure field name is `deliveryStatus`
 });
+
 
 const Post = mongoose.model('Post', postSchema);
 

@@ -3,6 +3,8 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoute');
 const postRoutes = require('./routes/postRoutes');
+const shipmentRoutes = require('./routes/shipments'); // Make sure this path is correct
+
 const Post = require('./models/Post'); // Import Post model
 const jwt = require('jsonwebtoken'); // Import JWT for token handling
 require('dotenv').config();
@@ -52,6 +54,8 @@ app.post('/api/send-sms', (req, res) => {
       res.status(500).json({ error: error.message });
     });
 });
+
+app.use('/api/shipments', shipmentRoutes);
 
 // Route to validate unique URL and get post data
 app.get('/api/validate-link/:uniqueId', async (req, res) => {

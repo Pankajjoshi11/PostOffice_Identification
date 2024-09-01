@@ -13,7 +13,7 @@ router.post('/generate-link', async (req, res) => {
   try {
     const newLink = new Link({ uniqueId, expiresAt, consignmentNo });
     await newLink.save();
-    res.json({ link: `http://localhost:3000/update-address/${uniqueId}` });
+    res.json({ link: `http://localhost:3000/update-address/${consignmentNo}` });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -21,10 +21,10 @@ router.post('/generate-link', async (req, res) => {
 
 // Route to validate and get address details
 router.get('/validate-link/:uniqueId', async (req, res) => {
-  const { uniqueId } = req.params;
+  const { consignmentNo } = req.params;
 
   try {
-    const link = await Link.findOne({ uniqueId });
+    const link = await Link.findOne({ consignmentNo });
     if (!link || link.expiresAt < new Date()) {
       return res.status(400).json({ error: 'Link has expired or is invalid' });
     }

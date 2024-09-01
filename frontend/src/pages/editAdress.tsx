@@ -26,6 +26,7 @@ const EditAddress: React.FC = () => {
     const fetchPost = async () => {
       try {
         const response = await fetch(`http://localhost:4000/api/validate-link/${uniqueId}`);
+
         const data = await response.json();
         if (data.valid) {
           setPost(data.post);
@@ -55,7 +56,7 @@ const EditAddress: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:4000/api/update-address', {
+      const response = await fetch('http://localhost:3000/api/update-address', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

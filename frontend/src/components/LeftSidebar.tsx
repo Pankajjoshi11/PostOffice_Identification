@@ -6,7 +6,7 @@ const LeftSidebar: FC = () => {
     <div className="hidden border-r bg-muted/40 lg:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-[60px] items-center border-b px-6">
-          <Link to="#" className="flex items-center gap-2 font-semibold">
+          <Link to="/" className="flex items-center gap-2 font-semibold">
             <Package2Icon className="h-6 w-6" />
             <span>India Post</span>
           </Link>
@@ -14,35 +14,35 @@ const LeftSidebar: FC = () => {
         <div className="flex-1 overflow-auto py-2">
           <nav className="grid items-start px-4 text-sm font-medium">
             <Link
-              to="#"
+              to="/"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <HomeIcon className="h-4 w-4" />
               Dashboard
             </Link>
             <Link
-              to="#"
+              to="/employees"
               className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
             >
               <UsersIcon className="h-4 w-4" />
               Employees
             </Link>
             <Link
-              to="#"
+              to="/packages"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <PackageIcon className="h-4 w-4" />
               Packages
             </Link>
             <Link
-              to="#"
+              to="/schedule"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <CalendarIcon className="h-4 w-4" />
               Schedule
             </Link>
             <Link
-              to="#"
+              to="/settings"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <SettingsIcon className="h-4 w-4" />
@@ -53,7 +53,7 @@ const LeftSidebar: FC = () => {
       </div>
     </div>
   );
-};
+}
 
 function CalendarIcon(props: SVGProps<SVGSVGElement>) {
   return (

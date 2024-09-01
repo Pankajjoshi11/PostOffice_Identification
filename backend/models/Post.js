@@ -10,6 +10,8 @@ const postSchema = new mongoose.Schema({
   city: { type: String, required: true },
   pincode: { type: String, required: true },
   area: { type: String, required: true },
+  addressVerified:{ type: Boolean, required: true,default: false },
+
   addressLine1: { type: String, required: true },
   addressLine2: { type: String, required: false },
   deliveryStatus: { type: String, default: '' }, // Ensure field name is `deliveryStatus`

@@ -29,30 +29,37 @@ const authToken = process.env.TWILIO_AUTH_TOKEN || 'your_auth_token';
 const twilioClient = twilio(accountSid, authToken);
 
 // Twilio SMS route
-app.post('/api/send-sms', (req, res) => {
-  const { phoneNumber, message } = req.body;
+router.post('/send-update-link', async (req, res) => {
+  const { phoneNumber, consignmentNo } = req.body;
 
-  // Logging received data
-  console.log('Received phoneNumber:', phoneNumber);
-  console.log('Received message:', message);
+  try {
+    // Find the post by consignment number
+    const post = await Post.findOne({ consignmentNo });
 
-  // Validate input
-  if (!phoneNumber || !message) {
-    return res.status(400).json({ error: 'Phone number and message are required.' });
-  }
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
 
-  // Sending SMS via Twilio
-  twilioClient.messages
-    .create({
-      body: message,
+    // Check if the address is verified
+    if (post.addressVerified) {
+      return res.status(400).json({ message: 'Address is already verified. No SMS sent.' });
+    }
+
+    // Construct the URL for the user to update their address
+    const updateUrl = `http://localhost:3000/update-address/${consignmentNo}`;
+
+    // Send the SMS
+    const message = await twilioClient.messages.create({
+      body: `Hey, we found a discrepancy in your address. Please correct it using the following link: ${updateUrl}`,
       from: '+12568249637', // Your Twilio number
       to: phoneNumber,
-    })
-    .then((message) => res.json({ sid: message.sid }))
-    .catch((error) => {
-      console.error('Twilio Error:', error);
-      res.status(500).json({ error: error.message });
     });
+
+    return res.json({ sid: message.sid });
+  } catch (error) {
+    console.error('Twilio Error:', error);
+    return res.status(500).json({ error: error.message });
+  }
 });
 
 app.use('/api/shipments', shipmentRoutes);
@@ -82,28 +89,43 @@ app.get('/api/validate-link/:uniqueId', async (req, res) => {
 });
 
 // Route to update address
-app.post('/api/update-address', async (req, res) => {
-  const { consignmentNo, address } = req.body;
-
-  if (!consignmentNo || !address) {
-    return res.status(400).json({ error: 'Consignment number and address are required.' });
-  }
+app.put('/api/update-address/:consignmentNo', async (req, res) => {
+  const { consignmentNo } = req.params;
+  const {
+    addressLine1,
+    addressLine2,
+    state,
+    city,
+    pincode,
+    area,
+    deliveryStatus
+  } = req.body;
 
   try {
+    // Find and update the post by consignment number
     const updatedPost = await Post.findOneAndUpdate(
       { consignmentNo },
-      { $set: address },
-      { new: true } // Return the updated document
+      {
+        addressLine1,
+        addressLine2,
+        state,
+        city,
+        pincode,
+        area,
+        addressVerified: true, // Set addressVerified to true upon update
+        deliveryStatus,
+      },
+      { new: true, runValidators: true } // Return the updated document and validate
     );
 
-    if (updatedPost) {
-      res.json({ message: 'Address updated successfully', post: updatedPost });
-    } else {
-      res.status(404).json({ error: 'Post not found.' });
+    if (!updatedPost) {
+      return res.status(404).json({ message: 'Post not found' });
     }
+
+    res.json(updatedPost);
   } catch (error) {
-    console.error('Error updating address:', error);
-    res.status(500).json({ error: 'An error occurred while updating the address.' });
+    console.error('Update Address Error:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 

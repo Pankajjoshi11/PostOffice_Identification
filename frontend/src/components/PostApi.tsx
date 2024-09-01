@@ -8,7 +8,7 @@ const PostApi: React.FC = () => {
   const [status, setStatus] = useState<string>(''); // State to store the status
 
   const userPincode = 400067;
-  const userDistrict='Mumbai'
+  //const userDistrict = 'Mumbai';
 
   interface PostOffice {
     Name: string;
@@ -26,7 +26,6 @@ const PostApi: React.FC = () => {
   const isPincode = (query: string): boolean => /^\d+$/.test(query);
 
   const fetchData = async (query: string) => {
-    // Use ternary operator to choose the API endpoint
     const apiUrl = isPincode(query)
       ? `https://api.postalpincode.in/pincode/${query}`
       : `https://api.postalpincode.in/postoffice/${query}`;
@@ -37,18 +36,33 @@ const PostApi: React.FC = () => {
       setData(postOffices);
       setError(null);
 
-      // Compare the user's pincode with the fetched pincodes
       const pincodes = postOffices.map((postOffice) => postOffice.Pincode);
-      if (pincodes.includes(userPincode.toString()) /*&& districts.includes(userDistrict.toString()) */ ) {
+
+      if (pincodes.includes(userPincode.toString()) /*&& districts.includes(userDistrict.toString()) */) {
         setStatus('OK');
+        updateAddressVerification(true); // Address matches, set verified to true
       } else {
         setStatus(`NOT FOUND. Suggested Pincode: ${pincodes[0]}`);
+        updateAddressVerification(false); // Address doesn't match, set verified to false
       }
     } catch (error) {
       console.error('Error fetching data:', error);
       setData([]);
       setError('No data found or invalid query.');
       setStatus('');
+    }
+  };
+
+  // Function to update the address verification status in the backend
+  const updateAddressVerification = async (isVerified: boolean) => {
+    try {
+      const consignmentNo = 'YourConsignmentNo'; // Replace this with the actual consignment number
+      const response = await axios.patch(`/api/posts/${consignmentNo}`, {
+        addressVerified: isVerified,
+      });
+      console.log('Address verification updated:', response.data);
+    } catch (error) {
+      console.error('Error updating address verification:', error);
     }
   };
 

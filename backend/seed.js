@@ -32,6 +32,20 @@ const examplePosts = [
     addressLine1: '456 Elm St',
     addressLine2: '',
     deliveryStatus: 'pending'
+  },
+  {
+    consignmentNo: 'XYZ452',
+    senderName: 'Charlie Brown',
+    senderNumber: '555-555-5555',
+    receiverName: 'Diana Prince',
+    receiverNumber: '444-444-4444',
+    state: 'New York',
+    city: 'New York',
+    pincode: '10001',
+    area: 'Midtown',
+    addressLine1: '456 Elm St',
+    addressLine2: '',
+    deliveryStatus: 'pending'
   }
 ];
 

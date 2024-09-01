@@ -1,4 +1,4 @@
-const express = require('express');
+/*const express = require('express');
 const crypto = require('crypto');
 const Link = require('../models/Link');
 
@@ -36,3 +36,4 @@ router.get('/validate-link/:uniqueId', async (req, res) => {
 });
 
 module.exports = router;
+*/

@@ -29,7 +29,7 @@ const authToken = process.env.TWILIO_AUTH_TOKEN || 'your_auth_token';
 const twilioClient = twilio(accountSid, authToken);
 
 // Twilio SMS route
-router.post('/send-update-link', async (req, res) => {
+app.post('/send-update-link', async (req, res) => {
   const { phoneNumber, consignmentNo } = req.body;
 
   try {
@@ -47,6 +47,7 @@ router.post('/send-update-link', async (req, res) => {
 
     // Construct the URL for the user to update their address
     const updateUrl = `http://localhost:3000/update-address/${consignmentNo}`;
+    //http://localhost:3000/update-address/XYZ456
 
     // Send the SMS
     const message = await twilioClient.messages.create({
@@ -65,6 +66,7 @@ router.post('/send-update-link', async (req, res) => {
 app.use('/api/shipments', shipmentRoutes);
 
 // Route to validate unique URL and get post data
+/*
 app.get('/api/validate-link/:uniqueId', async (req, res) => {
   const { uniqueId } = req.params;
 
@@ -87,8 +89,10 @@ app.get('/api/validate-link/:uniqueId', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while validating the link.' });
   }
 });
+*/
 
 // Route to update address
+/*
 app.put('/api/update-address/:consignmentNo', async (req, res) => {
   const { consignmentNo } = req.params;
   const {
@@ -128,6 +132,7 @@ app.put('/api/update-address/:consignmentNo', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+*/
 
 // Start the server
 const PORT = process.env.PORT || 4000;

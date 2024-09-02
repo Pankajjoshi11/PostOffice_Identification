@@ -1,4 +1,4 @@
-const express = require('express');
+/*const express = require('express');
 const crypto = require('crypto');
 const Link = require('../models/Link');
 
@@ -13,7 +13,7 @@ router.post('/generate-link', async (req, res) => {
   try {
     const newLink = new Link({ uniqueId, expiresAt, consignmentNo });
     await newLink.save();
-    res.json({ link: `http://localhost:3000/update-address/${consignmentNo}` });
+    res.json({ link: `http://localhost:3000/update-address/${uniqueId}` });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -21,12 +21,12 @@ router.post('/generate-link', async (req, res) => {
 
 // Route to validate and get address details
 router.get('/validate-link/:uniqueId', async (req, res) => {
-  const { consignmentNo } = req.params;
+  const { uniqueId } = req.params; // Corrected line
 
   try {
-    const link = await Link.findOne({ consignmentNo });
+    const link = await Link.findOne({ uniqueId }); // Corrected line
     if (!link || link.expiresAt < new Date()) {
-      return res.status(400).json({ error: 'Link has expired or is invalid' });
+      return res.status(400).json({ valid: false }); // Corrected response
     }
 
     res.json({ valid: true, consignmentNo: link.consignmentNo });
@@ -36,3 +36,4 @@ router.get('/validate-link/:uniqueId', async (req, res) => {
 });
 
 module.exports = router;
+*/

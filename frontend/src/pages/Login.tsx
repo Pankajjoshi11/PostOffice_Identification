@@ -49,8 +49,7 @@ const Login: React.FC = () => {
     try {
       const response = await axios.post('http://localhost:4000/api/users/login', data);
       console.log('Login successful:', response.data);
-      navigate('/'); // Redirect after successful login
-    } catch (error) {
+      navigate(`/dashboard/${response.data.user.postOfficeId}`);    } catch (error) {
       console.error('Error logging in:', error);
       alert('Invalid credentials');
     }

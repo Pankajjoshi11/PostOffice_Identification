@@ -1,51 +1,59 @@
 // src/Dashboard.tsx
 import React, { useState, useEffect, useCallback, ReactNode } from 'react';
-import { MenuIcon } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom'; // Import useParams
+import { MenuIcon, PlusCircleIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { PackageIcon, TruckIcon, MailIcon } from "lucide-react";
 import LeftSidebar from './LeftSidebar'; // Import LeftSidebar component
-import MailTable from './Table';
 
 interface DashboardProps {
   children: ReactNode;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ children }) => {
+  const { postofficeId } = useParams<{ postofficeId: string }>(); // Extract postofficeId from URL params
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [packageCount, setPackageCount] = useState<number | null>(null);
   const [pendingCount, setPendingCount] = useState<number | null>(null);
+  
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   const toggleSidebar = useCallback(() => {
     setIsSidebarOpen(prevState => !prevState);
   }, []);
 
-useEffect(() => {
-  const fetchCounts = async () => {
-    try {
-      const [deliveredResponse, pendingResponse] = await Promise.all([
-        fetch('http://localhost:4000/api/shipments/count-delivered'),
-        fetch('http://localhost:4000/api/shipments/count-pending')
-      ]);
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const [deliveredResponse, pendingResponse] = await Promise.all([
+          fetch(`http://localhost:4000/api/shipments/count-delivered?postofficeId=${postofficeId}`),
+          fetch(`http://localhost:4000/api/shipments/count-pending?postofficeId=${postofficeId}`)
+        ]);
 
-      if (!deliveredResponse.ok || !pendingResponse.ok) {
-        throw new Error('Network response was not ok');
+        if (!deliveredResponse.ok || !pendingResponse.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const deliveredData = await deliveredResponse.json();
+        const pendingData = await pendingResponse.json();
+
+        setPackageCount(deliveredData.count);
+        setPendingCount(pendingData.count);
+      } catch (error) {
+        console.error('Error fetching counts:', error);
       }
+    };
 
-      const deliveredData = await deliveredResponse.json();
-      const pendingData = await pendingResponse.json();
+    if (postofficeId) {
+      fetchCounts();
+    }
+  }, [postofficeId]);
 
-      console.log('Delivered Data:', deliveredData); // Log data
-      console.log('Pending Data:', pendingData);     // Log data
-
-      setPackageCount(deliveredData.count);
-      setPendingCount(pendingData.count);
-    } catch (error) {
-      console.error('Error fetching counts:', error);
+  const handlePostFormRedirect = () => {
+    if (postofficeId) {
+      navigate(`/posts/new/${postofficeId}`); // Navigate to the PostForm page with postOfficeId
     }
   };
-
-  fetchCounts();
-}, []);
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -53,7 +61,16 @@ useEffect(() => {
 
       <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'} lg:ml-0`}>
         <header className="bg-white shadow-sm p-4 flex items-center justify-between lg:hidden">
-          <h1 className="text-xl font-bold text-primary">Post Office</h1>
+          <h1 className="text-xl font-bold text-primary flex items-center">
+            Dashboard
+            <button 
+              className="ml-4 p-2 text-primary hover:text-primary-dark"
+              onClick={handlePostFormRedirect}
+              aria-label="Create New Post"
+            >
+              <PlusCircleIcon className="h-6 w-6" />
+            </button>
+          </h1>
           <button 
             className="text-gray-500 hover:text-gray-700"
             onClick={toggleSidebar}

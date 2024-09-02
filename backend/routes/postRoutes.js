@@ -1,22 +1,19 @@
 const express = require('express');
-const Post = require('../models/Post');
+const {
+  createPost,
+  getAllPosts,
+  getPostByConsignmentNo,
+  updatePostByConsignmentNo,
+  deletePostByConsignmentNo
+} = require('../controllers/postController');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
-// Route to update address details
-router.post('/update-address', async (req, res) => {
-  const { consignmentNo, address } = req.body;
-
-  try {
-    const updatedPost = await Post.findOneAndUpdate({ consignmentNo }, address, { new: true });
-    if (!updatedPost) {
-      return res.status(404).json({ error: 'Consignment number not found' });
-    }
-    res.json(updatedPost);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Define routes without middleware
+router.post('/', createPost);
+router.get('/', getAllPosts);
+router.get('/:consignmentNo', getPostByConsignmentNo);
+router.put('/:consignmentNo', updatePostByConsignmentNo);
+router.delete('/:consignmentNo', deletePostByConsignmentNo);
 
 module.exports = router;
-

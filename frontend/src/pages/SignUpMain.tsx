@@ -1,21 +1,21 @@
 import React, { useState, useCallback } from 'react';
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import debounce from 'lodash.debounce';
 
 // Define the validation schema
 export const UserFormValidation = z.object({
-  name: z.string().min(1, "Name is required"),
-  pincode: z.string().min(1, "Pincode is required"),
-  deliveryStatus: z.string().default(""),
-  district: z.string().default(""),
-  state: z.string().default(""),
+  name: z.string().min(1, 'Name is required'),
+  pincode: z.string().min(1, 'Pincode is required'),
+  deliveryStatus: z.string().default(''),
+  district: z.string().default(''),
+  state: z.string().default(''),
   password: z.string()
-    .min(2, "Password must be at least 2 characters")
-    .max(50, "Password must be at most 50 characters"),
+    .min(2, 'Password must be at least 2 characters')
+    .max(50, 'Password must be at most 50 characters'),
 });
 
 // Fetch names for autocomplete based on pincode
@@ -59,12 +59,12 @@ const SignUpMain = () => {
   const form = useForm<z.infer<typeof UserFormValidation>>({
     resolver: zodResolver(UserFormValidation),
     defaultValues: {
-      name: "",
-      pincode: "",
-      deliveryStatus: "",
-      district: "",
-      state: "",
-      password: "",
+      name: '',
+      pincode: '',
+      deliveryStatus: '',
+      district: '',
+      state: '',
+      password: '',
     },
   });
 
@@ -78,7 +78,14 @@ const SignUpMain = () => {
       console.log('User registered:', response.data);
       navigate('/login'); // Redirect after successful registration
     } catch (error) {
-      console.error('Error registering user:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        // Display error message from server
+        console.error('Error registering user:', error.response.data);
+        alert(`Registration failed: ${error.response.data.message || 'An error occurred'}`);
+      } else {
+        console.error('Unexpected error:', error);
+        alert('An unexpected error occurred');
+      }
     }
   };
 

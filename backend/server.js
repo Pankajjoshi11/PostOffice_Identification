@@ -1,12 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
-const userRoutes = require('./routes/userRoute');
+const userRoutes = require('./routes/userRoute'); // Updated to include authentication routes
 const postRoutes = require('./routes/postRoutes');
 const shipmentRoutes = require('./routes/shipments');
+
 const linkRoutes = require('./routes/linkRoutes');
 const Post = require('./models/Post');
 const jwt = require('jsonwebtoken');
+const Post = require('./models/Post'); // Import Post model
+
+
 require('dotenv').config();
 
 connectDB();
@@ -16,10 +20,16 @@ app.use(cors());
 app.use(express.json());
 
 // API Routes
+
 app.use('/api/users', userRoutes);
 app.use('/api/shipments', shipmentRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/links', linkRoutes);  // Add the link routes
+
+app.use('/api/users', userRoutes); // Authentication routes are now included in userRoutes
+app.use('/api/:postOfficeId/posts', postRoutes);
+app.use('/api/shipments', shipmentRoutes); // Public route for shipments
+
 
 // Twilio setup
 const twilio = require('twilio');
@@ -31,13 +41,15 @@ if (!accountSid || !authToken) {
 }
 const twilioClient = twilio(accountSid, authToken);
 
-// Post list route
-app.get('/api/posts', async (req, res) => {
-  try {
-    const posts = await Post.find();
-    res.json(posts);
-  } catch (error) {
-    res.status(500).send('Error fetching posts');
+// Twilio SMS route
+app.post('/api/send-sms', (req, res) => {
+  const { phoneNumber, message } = req.body;
+
+  console.log('Received phoneNumber:', phoneNumber);
+  console.log('Received message:', message);
+
+  if (!phoneNumber || !message) {
+    return res.status(400).json({ error: 'Phone number and message are required.' });
   }
 });
 

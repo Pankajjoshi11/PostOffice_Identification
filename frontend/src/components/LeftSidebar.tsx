@@ -1,7 +1,11 @@
-import { Link } from "react-router-dom";
-import { FC, SVGProps } from "react";
+import React from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { FC, SVGProps } from 'react';
 
 const LeftSidebar: FC = () => {
+  // Extract postOfficeId from the URL params
+  const { postOfficeId } = useParams<{ postOfficeId: string }>();
+
   return (
     <div className="hidden border-r bg-muted/40 lg:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
@@ -14,44 +18,65 @@ const LeftSidebar: FC = () => {
         <div className="flex-1 overflow-auto py-2">
           <nav className="grid items-start px-4 text-sm font-medium">
             <Link
-              to="/"
+              to={`/dashboard/${postOfficeId}`}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <HomeIcon className="h-4 w-4" />
               Dashboard
             </Link>
             <Link
-              to="/employees"
-              className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
+              to={`/dashboard/${postOfficeId}/employees`}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <UsersIcon className="h-4 w-4" />
               Employees
             </Link>
             <Link
-              to="/packages"
+              to={`/dashboard/${postOfficeId}/packages`}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <PackageIcon className="h-4 w-4" />
               Packages
             </Link>
             <Link
-              to="/schedule"
+              to={`/dashboard/${postOfficeId}/schedule`}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <CalendarIcon className="h-4 w-4" />
               Schedule
             </Link>
             <Link
-              to="/settings"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              to={`/dashboard/${postOfficeId}/posts/new`}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${!postOfficeId ? 'cursor-not-allowed opacity-50' : ''}`}
+              aria-disabled={!postOfficeId ? true : false}
             >
-              <SettingsIcon className="h-4 w-4" />
-              Settings
+              <PostIcon className="h-4 w-4" />
+              Post Form
             </Link>
           </nav>
         </div>
       </div>
     </div>
+  );
+};
+
+// Icon components as defined previously
+function PostIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 2v20M2 12h20" />
+    </svg>
   );
 }
 
@@ -183,4 +208,3 @@ function UsersIcon(props: SVGProps<SVGSVGElement>) {
 }
 
 export default LeftSidebar;
-

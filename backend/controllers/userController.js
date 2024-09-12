@@ -1,5 +1,13 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const { v4: uuidv4 } = require('uuid'); // For generating unique postOfficeId
+
+// Function to generate a unique postOfficeId based on pincode
+const generatePostOfficeId = (pincode) => {
+  // For simplicity, we'll use a UUID combined with the pincode.
+  // Adjust this function if you have a more specific logic for generating postOfficeId.
+  return `${uuidv4()}-${pincode}`;
+};
 
 // Register a new user
 const registerUser = async (req, res) => {
@@ -8,10 +16,8 @@ const registerUser = async (req, res) => {
   console.log('Received registration request:', req.body); // Debugging line
 
   try {
-    // Check if the user already exists
+    // Check if the user already exists by email, assuming you want uniqueness by email
     const userExists = await User.findOne({ email: req.body.email });
-
-    console.log('User exists:', userExists); // Debugging line
 
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
@@ -19,6 +25,9 @@ const registerUser = async (req, res) => {
 
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Generate postOfficeId
+    const postOfficeId = generatePostOfficeId(pincode);
 
     // Create a new user
     const user = await User.create({
@@ -28,6 +37,7 @@ const registerUser = async (req, res) => {
       district,
       state,
       password: hashedPassword, // Save the hashed password
+      postOfficeId, // Save the generated postOfficeId
     });
 
     console.log('New user created:', user); // Debugging line
@@ -35,7 +45,7 @@ const registerUser = async (req, res) => {
     res.status(201).json({
       _id: user._id,
       name: user.name,
-      email: user.email,
+      postOfficeId: user.postOfficeId, // Include postOfficeId in the response
     });
   } catch (error) {
     console.error('Error in registerUser:', error); // Debugging line
@@ -65,7 +75,15 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    res.status(200).json({ message: 'Login successful', user });
+    res.status(200).json({ 
+      message: 'Login successful', 
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        postOfficeId: user.postOfficeId // Include postOfficeId in the response
+      } 
+    });
   } catch (error) {
     console.error('Error in loginUser:', error); // Debugging line
     res.status(500).json({ message: 'Server error', error: error.message });

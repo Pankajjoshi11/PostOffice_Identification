@@ -1,15 +1,19 @@
 const express = require('express');
-const router = express.Router();
-const Post = require('../models/Post');
+const {
+  createPost,
+  getAllPosts,
+  getPostByConsignmentNo,
+  updatePostByConsignmentNo,
+  deletePostByConsignmentNo
+} = require('../controllers/postController');
 
-// Route to get all posts
-router.get('/', async (req, res) => {
-  try {
-    const posts = await Post.find();
-    res.json(posts);
-  } catch (error) {
-    res.status(500).send('Error fetching posts');
-  }
-});
+const router = express.Router({ mergeParams: true });
+
+// Define routes without middleware
+router.post('/', createPost);
+router.get('/', getAllPosts);
+router.get('/:consignmentNo', getPostByConsignmentNo);
+router.put('/:consignmentNo', updatePostByConsignmentNo);
+router.delete('/:consignmentNo', deletePostByConsignmentNo);
 
 module.exports = router;

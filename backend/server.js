@@ -4,6 +4,7 @@ const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoute');
 const postRoutes = require('./routes/postRoutes');
 const shipmentRoutes = require('./routes/shipments');
+const linkRoutes = require('./routes/linkRoutes');
 const Post = require('./models/Post');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/shipments', shipmentRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/links', linkRoutes);  // Add the link routes
 
 // Twilio setup
 const twilio = require('twilio');
@@ -39,7 +41,7 @@ app.get('/api/posts', async (req, res) => {
   }
 });
 
-// Twilio SMS route
+// Twilio SMS route to send update link
 app.post('/send-update-link', async (req, res) => {
   const { phoneNumber, consignmentNo } = req.body;
 

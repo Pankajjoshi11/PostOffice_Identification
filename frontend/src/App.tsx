@@ -21,8 +21,9 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUpMain />} />
+        {/*
         <Route path="/update-address/:consignmentNo" element={<UpdatePostPage />} />
-       
+       */}
         {/*<Route path="/employees" element={<Employees />} />*/}
         <Route path="/packages" element={<Packages />} />
         
